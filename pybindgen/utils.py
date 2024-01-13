@@ -27,6 +27,7 @@ except ImportError:
 
 from pybindgen import settings
 import warnings
+import platform
 
 
 def write_preamble(code_sink, min_python_version=None):
@@ -109,13 +110,17 @@ typedef intobjargproc ssizeobjargproc;
 #endif
 ''')
 
-    code_sink.writeln(r'''
+    if platform.python_implementation() == "CPython":
+        code_sink.writeln(r'''
 #if PY_VERSION_HEX >= 0x03000000
 #if PY_VERSION_HEX >= 0x03050000
 typedef PyAsyncMethods* cmpfunc;
 #else
 typedef void* cmpfunc;
 #endif
+''')
+
+    code_sink.writeln(r'''
 #define PyCObject_FromVoidPtr(a, b) PyCapsule_New(a, NULL, b)
 #define PyCObject_AsVoidPtr(a) PyCapsule_GetPointer(a, NULL)
 #define PyString_FromString(a) PyBytes_FromString(a)
