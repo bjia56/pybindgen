@@ -110,9 +110,12 @@ typedef intobjargproc ssizeobjargproc;
 #endif
 ''')
 
+    code_sink.writeln(r'''
+#if PY_VERSION_HEX >= 0x03000000
+''')
+
     if platform.python_implementation() == "CPython":
         code_sink.writeln(r'''
-#if PY_VERSION_HEX >= 0x03000000
 #if PY_VERSION_HEX >= 0x03050000
 typedef PyAsyncMethods* cmpfunc;
 #else
